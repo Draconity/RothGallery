@@ -11,32 +11,52 @@
 				redraw();
 
 				$( "#myCanvas" ).mousedown(function(e){
-					mainCTX.save();
-					mainCTX.translate(e.pageX, e.pageY);
+					refreshMouseXY(e);
 					redraw();
-					mainCTX.restore();
+					dragging = true;
+					dragStartX = mouseX - picX;
+					dragStartY = mouseY - picY;	
 				});
 				
 				$( "#myCanvas" ).mousemove(function(e){
-					redraw();			
+					if(dragging){
+						if (!mouseInOut){
+							refreshMouseXY(e);
+						}else{
+							mouseInOut = false;
+						}
+						picX = (mouseX - dragStartX);
+						picY = (mouseY - dragStartY);
+						redraw();			
+					}
 				});
-				
-				$( "#myCanvas" ).mouseup(function(e){
-					redraw();			
-				});
-				
-				$( "#myCanvas" ).mouseenter(function(e){
-					redraw();			
+				$( "#myCanvas" ).mouseenter(function(e)	{
+					refreshMouseXY(e); mouseInOut = true; 
+					$( "#myCanvas" ).mousemove();
+					dragging = false;
 				});			
-				
-				$( "#myCanvas" ).mouseleave(function(e){
+				$( "#myCanvas" ).mouseleave(function(e)	{
+					refreshMouseXY(e); mouseInOut = true;
+					$( "#myCanvas" ).mousemove();
+					dragging = false;
+				});			
+								
+				$( "#myCanvas" ).mouseup(function(e){
+					dragging = false;
+					refreshMouseXY(e);
 					redraw();			
-				});	
+				});
+			
+				$( "#myCanvas" ).bind("mousewheel", function(e){
+					refreshMouseXY(e);
+					redraw();
+				});
+				
 			});
 					
 		</script>
 	</head>
 	<body>
-		<canvas id="myCanvas" width="800px" height="600px" style="border:1px black solid;">
+		<canvas id="myCanvas" width="480px" height="240px" style="border:1px black solid;">
 	</body>
 </html>
