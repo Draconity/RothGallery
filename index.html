@@ -11,7 +11,7 @@
 				redraw();
 
 				$( "#myCanvas" ).mousedown(function(e){
-					refreshMouseXY(e);
+					refreshMouseXYZ(e);
 					redraw();
 					dragging = true;
 					refreshAnchorXY();			
@@ -20,39 +20,30 @@
 				});
 				
 				$( "#myCanvas" ).mousemove(function(e){
-					if (!mouseInOut){
-						refreshMouseXY(e);
-					}else{
-						mouseInOut = false;
-					}
+					//Refresh the mouse coordinates, unless it was already done by the mouseenter/mouseleave events (e isn't entirely passed from those events - wheelDelta is missing).  
+					if (!mouseInOut){ refreshMouseXYZ(e); }else{ mouseInOut = false;	} 
+					
 					if(dragging){
 						//Update the pic's position if it's being dragged by the mouse.
-						picX = (mouseX - anchorX*scaleFactor); //Remember to convert our Anchor to be represented on the current grid scale.
-						picY = (mouseY - anchorY*scaleFactor);
+						picX = (mouseX/scaleFactor) - anchorX; //Remember to convert our Anchor to be represented on the current grid scale.
+						picY = (mouseY/scaleFactor) - anchorY;
 					}
-					redraw();			
-				
+					redraw();							
 				});
-				$( "#myCanvas" ).mouseenter(function(e)	{
-					refreshMouseXY(e); mouseInOut = true; 
-					$( "#myCanvas" ).mousemove();
-					dragging = false;
-				});			
-				$( "#myCanvas" ).mouseleave(function(e)	{
-					refreshMouseXY(e); mouseInOut = true;
-					$( "#myCanvas" ).mousemove();
-					dragging = false;
-				});			
+				//These will give smooter drags along the edges of the canvas, and help ensure the drag doesn't continue when it shouldn't.
+				$( "#myCanvas" ).mouseenter(function(e)	{ refreshMouseXYZ(e); mouseInOut = true; $( "#myCanvas" ).mousemove(); dragging = false; }); 
+				$( "#myCanvas" ).mouseleave(function(e)	{ refreshMouseXYZ(e); mouseInOut = true; $( "#myCanvas" ).mousemove(); dragging = false; });			
 								
 				$( "#myCanvas" ).mouseup(function(e){
 					dragging = false;
-					refreshMouseXY(e);
+					refreshMouseXYZ(e);
 					redraw();			
 				});
 			
 				$( "#myCanvas" ).bind("mousewheel", function(e){
-					refreshMouseXY(e);
-					//refreshAnchorXY();
+					refreshMouseXYZ(e);
+					//refreshAnchorXY();	
+					zoomX = mouseX; zoomY = mouseY;
 					redraw();
 				});
 				
