@@ -14,21 +14,24 @@
 					refreshMouseXY(e);
 					redraw();
 					dragging = true;
-					dragStartX = mouseX - picX;
-					dragStartY = mouseY - picY;	
+					refreshAnchorXY();			
+					dragStartMouseX = mouseX;
+					dragStartMouseY = mouseY;	
 				});
 				
 				$( "#myCanvas" ).mousemove(function(e){
-					if(dragging){
-						if (!mouseInOut){
-							refreshMouseXY(e);
-						}else{
-							mouseInOut = false;
-						}
-						picX = (mouseX - dragStartX);
-						picY = (mouseY - dragStartY);
-						redraw();			
+					if (!mouseInOut){
+						refreshMouseXY(e);
+					}else{
+						mouseInOut = false;
 					}
+					if(dragging){
+						//Update the pic's position if it's being dragged by the mouse.
+						picX = (mouseX - anchorX*scaleFactor); //Remember to convert our Anchor to be represented on the current grid scale.
+						picY = (mouseY - anchorY*scaleFactor);
+					}
+					redraw();			
+				
 				});
 				$( "#myCanvas" ).mouseenter(function(e)	{
 					refreshMouseXY(e); mouseInOut = true; 
@@ -49,6 +52,7 @@
 			
 				$( "#myCanvas" ).bind("mousewheel", function(e){
 					refreshMouseXY(e);
+					//refreshAnchorXY();
 					redraw();
 				});
 				
